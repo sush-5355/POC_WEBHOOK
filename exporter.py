@@ -6,7 +6,7 @@ import requests
 
 log_file_path = 'sample_log.txt'  # Replace with your log file path
 json_output_file = 'log_entries3.json'
-webhook_url = 'http://localhost:8000/logs'  # Replace with your webhook URL
+webhook_url = 'http://95.217.191.79:8010/logs'  # Replace with your webhook URL
 
 # Define a regular expression pattern to match log entries
 log_pattern = r'\[(.*?)\] (.*?)\s*:\s*(.*)'
@@ -40,11 +40,14 @@ def write_log_entries_to_json(log_entries):
 # Function to send new log entries to the webhook
 def send_log_entries_to_webhook(new_log_entries):
     for entry in new_log_entries:
-        response = requests.post(webhook_url, json=entry)
-        if response.status_code == 200:
-            print(f"Log entry sent to webhook: {entry}")
-        else:
-            print(f"Failed to send log entry to webhook: {entry}")
+        try:
+            response = requests.post(webhook_url, json=entry)
+            if response.status_code == 200:
+                print(f"Log entry sent to webhook: {entry}")
+            else:
+                print(f"Failed to send log entry to webhook: {entry}")
+        except Exception as e:
+            print(e)
 
 # Read existing log entries from the JSON file
 log_entries = read_existing_log_entries()
@@ -69,14 +72,14 @@ while True:
                     log_entries.append(log_entry)
                     new_log_entries.append(log_entry)
 
-            # Write the updated log entries to a JSON file
-            write_log_entries_to_json(log_entries)
 
             # Send new log entries to the webhook
             if new_log_entries:
                 send_log_entries_to_webhook(new_log_entries)
+            # Write the updated log entries to a JSON file
+                write_log_entries_to_json(log_entries)
 
-        # Update the stored modification time
-        write_log_entries_to_json._log_file_modification_time = log_file_modification_time
+                # Update the stored modification time
+                write_log_entries_to_json._log_file_modification_time = log_file_modification_time
 
     time.sleep(1)  # Check for new entries every second

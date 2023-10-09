@@ -45,38 +45,28 @@
         "message": "Critical system error. Application shutting downnnnnnnnnnn."
     },
     {
-        "timestamp": "2023-10-08 10:50:16",
-        "log_level": "ERROR",
-        "message": "Critical system error."
-    },
-    {
-        "timestamp": "2023-10-08 10:52:16",
-        "log_level": "ERROR",
-        "message": "Critical system error."
-    },
-    {
-        "timestamp": "2023-10-08 10:53:16",
-        "log_level": "ERROR",
-        "message": "Critical system error."
-    },
-    {
-        "timestamp": "2023-10-08 10:54:16",
-        "log_level": "ERROR",
-        "message": "Critical system error."
-    },
-    {
-        "timestamp": "2023-10-08 10:54:32",
-        "log_level": "DEBUG",
-        "message": "Request processing completed in 150 ms."
-    },
-    {
-        "timestamp": "2023-10-08 10:54:33",
-        "log_level": "DEBUG",
-        "message": "Request processing completed in 150 ms."
+        "timestamp": "2023-10-08 10:35:18",
+        "log_level": "INFO",
+        "message": "User 'jane_smith' logged in."
     },
     {
         "timestamp": "2023-10-08 10:40:09",
         "log_level": "INFO",
         "message": "User 'jane_smith' logged out."
+    },
+    {
+        "timestamp": "2023-10-08 10:45:32",
+        "log_level": "DEBUG",
+        "message": "Request processing completed in 150 ms."
+    },
+    {
+        "timestamp": "2023-10-08 10:50:14",
+        "log_level": "ERROR",
+        "message": "Critical system error. Application shutting down."
+    },
+    {
+        "timestamp": "2023-10-08 10:50:16",
+        "log_level": "ERROR",
+        "message": "Critical system error. Application shutting downnnnnnnnnnn."
     }
 ]
