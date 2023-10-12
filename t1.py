@@ -1,57 +1,50 @@
-import os
-import json
-import re
-import time
+import asyncio
+from ping3 import ping, verbose_ping
+from pysnmp.hlapi import *
 
-log_file_path = 'sample_log.txt'  # Replace with your log file path
-json_output_file = 'log_entries.json'
+target_ip = '203.199.243.75'
+community = 'Test-MaaS'
 
-# Define a regular expression pattern to match log entries
-log_pattern = r'\[(.*?)\] (.*?)\s*:\s*(.*)'
 
-# Initialize a list to store processed log entries
-log_entries = []
+def snmpwalk():
+    # SNMP parameters
+    port = 161  # SNMP port (default is 161)
 
-# Function to parse a log line and convert it to a dictionary
-def parse_log_line(line):
-    match = re.match(log_pattern, line)
-    if match:
-        timestamp, log_level, message = match.groups()
-        log_entry = {
-            'timestamp': timestamp,
-            'log_level': log_level,
-            'message': message
-        }
-        return log_entry
-    return None
+    # SNMP walk operation
+    iterator = getCmd(
+        SnmpEngine(),
+        CommunityData(community,mpModel=1,contextEngineId=None),
+        UdpTransportTarget((target_ip, port)),
+        ContextData(),
+        ObjectType(ObjectIdentity('SNMPv2-MIB','sysDescr',0))
+    )
 
-# Function to write log entries to a JSON file
-def write_log_entries_to_json():
-    with open(json_output_file, 'w') as json_file:
-        json.dump(log_entries, json_file, indent=4)
+    # Perform the SNMP walk
+    for (errorIndication, errorStatus, errorIndex, varBinds) in iterator:
+        if errorIndication:
+            print(f"SNMP walk error: {errorIndication}")
+            break
+        elif errorStatus:
+            print(f"SNMP walk error: {errorStatus}")
+            break
+        else:
+            for varBind in varBinds:
+                print(f"{varBind[0]} = {varBind[1]}")
 
-while True:
-    # Check the modification time of the log file
-    log_file_modification_time = os.path.getmtime(log_file_path)
+try:
+    snmpwalk()
+except Exception as e:
+    print(f"An error occurred: {e}")
 
-    # If the modification time has changed, read and process new log entries
-    if log_file_modification_time != getattr(
-        write_log_entries_to_json, '_log_file_modification_time', None
-    ):
-        with open(log_file_path, 'r') as file:
-            # Read the new lines added to the log file
-            new_lines = file.readlines()[len(log_entries):]
+def icmpping(target_ip):
+    response_time = ping(target_ip)
+    if response_time is not None:
+        print(f"Response time: {response_time} ms")
+    else:
+        print("Host is unreachable")
+    verbose_ping(target_ip)
 
-            # Process and add new log entries to the list
-            for line in new_lines:
-                log_entry = parse_log_line(line.strip())
-                if log_entry:
-                    log_entries.append(log_entry)
 
-            # Write the updated log entries to a JSON file
-            write_log_entries_to_json()
+# Perform ICMP ping
+icmpping(target_ip)
 
-        # Update the stored modification time
-        write_log_entries_to_json._log_file_modification_time = log_file_modification_time
-
-    time.sleep(1)  # Check for new entries every second
